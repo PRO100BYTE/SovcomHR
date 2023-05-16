@@ -1,0 +1,65 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: The API of the auth service
+  version: '1.0'
+  title: Auth service API
+paths:
+  /api/auth:
+    post:
+      summary: login
+      operationId: login
+      tags:
+        - login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDataView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultView'
+        401:
+          description: not authentificated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultView'
+components:
+  schemas:
+    LoginResultView:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expireIn:
+          type: number
+        errors:
+          type: array
+          items:
+            type: string
+
+    LoginDataView:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user
+        password:
+          type: string
+          example: user
+      required:
+        - email
+        - password
+    
