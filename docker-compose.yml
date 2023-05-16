@@ -1,5 +1,6 @@
 services:
-  backend:
-    build: "/backend/"
+  auth-service:
+    build: ./backend/auth-service
     ports:
+      - "8000:8080"
       - "50005:50005"

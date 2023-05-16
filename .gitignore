@@ -1,5 +1,8 @@
+.idea
 backend/.gradle
 backend/.idea
 backend/build
 backend/*/.gradle
 backend/*/build
+backend/*.iml
+backend/*/*.iml
