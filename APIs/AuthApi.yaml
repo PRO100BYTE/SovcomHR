@@ -1,0 +1,166 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: The API of the auth service
+  version: '1.0'
+  title: Auth service API
+paths:
+  /api/auth/login:
+    post:
+      summary: login
+      operationId: login
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDataView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResultView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authentificated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/auth/registerUser:
+    post:
+      summary: registerUser
+      operationId: registerUser
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDataView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResultView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authentificated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/auth/registerHR:
+    post:
+      summary: registerHR
+      operationId: registerHR
+      tags:
+        - auth
+      security:
+        - bearerToken:
+          - "ROLE_ADMIN"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDataView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResultView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authentificated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    LoginResultView:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expireIn:
+          type: number
+        userType:
+          type: string
+
+    LoginDataView:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user
+        password:
+          type: string
+          example: user
+      required:
+        - email
+        - password
+
+    RegisterResultView:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expireIn:
+          type: number
+        userType:
+          type: string
+
+    RegisterDataView:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user
+        password:
+          type: string
+          example: user
+      required:
+        - email
+        - password
+
+    Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string
+    

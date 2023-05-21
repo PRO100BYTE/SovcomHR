@@ -1,0 +1,14 @@
+jwt:
+  expireIn: 86400000
+
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    password: password
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: user
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop

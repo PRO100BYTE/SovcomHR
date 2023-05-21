@@ -1,6 +1,18 @@
 services:
   auth-service:
     build: ./backend/auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-postgres:5432/postgres
     ports:
       - "8000:8080"
       - "50005:50005"
+    depends_on:
+      - auth-postgres
+  auth-postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
