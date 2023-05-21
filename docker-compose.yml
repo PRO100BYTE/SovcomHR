@@ -1,4 +1,21 @@
 services:
+  vacancy-service:
+    build: ./backend/vacancy-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://vacancy-postgres:5432/postgres
+    ports:
+      - "8001:8080"
+      - "50006:50005"
+    depends_on:
+      - vacancy-postgres
+  vacancy-postgres:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
   auth-service:
     build: ./backend/auth-service
     environment:

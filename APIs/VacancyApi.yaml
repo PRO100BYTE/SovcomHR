@@ -1,0 +1,205 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: The API of the vacancy service
+  version: '1.0'
+  title: Vacancy service API
+paths:
+  /api/vacancy/create:
+    post:
+      summary: vacancy creation
+      operationId: vacancy create
+      tags:
+        - vacancy
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_ADMIN"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VacancyCreationView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VacancyMetadataView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authentificated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/vacancy/{id}:
+    get:
+      summary: get vacancy
+      operationId: get vacancy
+      tags:
+        - vacancy
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: number
+            format: int64
+          required: true
+          description: the if of a vacancy
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VacancyView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/vacancy/top:
+    get:
+      summary: top vacancies
+      operationId: top vacancies
+      tags:
+        - vacancy
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VacancyView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/vacancy:
+    get:
+      summary: filtered vacancies
+      operationId: filtered vacancies
+      tags:
+        - vacancy
+      parameters:
+        - in: query
+          name: skillTags
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchedVacanciesView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    VacancyCreationView:
+      type: object
+      properties:
+        title:
+          type: string
+        body:
+          type: string
+        skillTags:
+          type: array
+          items:
+            type: string
+      required:
+        - title
+        - body
+        - tags
+    VacancyMetadataView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+      required:
+        - id
+    VacancyView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        title:
+          type: string
+        body:
+          type: string
+        skillTags:
+          type: array
+          items:
+            type: string
+        date:
+          type: number
+          format: int64
+      required:
+        - id
+        - title
+        - body
+        - tags
+    SearchedVacanciesView:
+      type: object
+      properties:
+        totalNumber:
+          type: number
+          format: int32
+        pages:
+          type: array
+          description: array of pages
+          items:
+            type: array
+            description: page's array containing vacancy ids
+            items:
+              type: number
+              format: int64
+        firstPage:
+          type: array
+          description: array of vacancies for the first page
+          items:
+            $ref: '#/components/schemas/VacancyView'
+    Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string
