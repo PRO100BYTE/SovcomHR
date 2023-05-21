@@ -1,16 +1,14 @@
 package com.pro100byte.model
 
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
-@Table(name = "skill")
+@Table(name = "SKILL_TAGS")
 class Skill {
     @Id
-    var skillTag: String? = null
+    @Column(name = "tag")
+    var tag: String? = null
 
-    @OneToMany(mappedBy = "skill")
+    @OneToMany(mappedBy = "skill", fetch = FetchType.LAZY)
     var skillVacancies: List<VacancySkillTag>? = null
 }

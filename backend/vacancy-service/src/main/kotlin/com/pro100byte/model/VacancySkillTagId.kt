@@ -2,14 +2,11 @@ package com.pro100byte.model
 
 import java.io.Serializable
 import java.util.*
-import javax.persistence.Column
 import javax.persistence.Embeddable
 
 @Embeddable
 class VacancySkillTagId : Serializable {
-    @Column(name = "vacancy_id")
     var vacancyId: Long? = null
-    @Column(name = "skill_tag")
     var skillTag: String? = null
 
     override fun equals(other: Any?): Boolean {

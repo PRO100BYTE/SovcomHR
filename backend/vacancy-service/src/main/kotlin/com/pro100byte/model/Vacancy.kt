@@ -15,6 +15,6 @@ abstract class Vacancy {
     @Column(name = "date")
     var date: Long? = null
 
-    @OneToMany(mappedBy = "vacancy")
+    @OneToMany(mappedBy = "vacancy", fetch = FetchType.LAZY)
     var vacancySkills: List<VacancySkillTag>? = null
 }

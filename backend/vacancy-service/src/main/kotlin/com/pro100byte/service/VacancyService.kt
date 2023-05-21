@@ -6,11 +6,11 @@ import com.pro100byte.repository.ClosedVacancyRepository
 import com.pro100byte.repository.OpenVacancyRepository
 import com.pro100byte.repository.SkillRepository
 import com.pro100byte.repository.VacancySkillTagRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
-import java.sql.Date
 
 @Service
 class VacancyService(
@@ -19,6 +19,7 @@ class VacancyService(
     private val skillRepository: SkillRepository,
     private val vacancySkillTagRepository: VacancySkillTagRepository,
 ) {
+    private val pageSize = 10
     @Transactional(
         isolation = Isolation.READ_COMMITTED
     )
@@ -33,25 +34,22 @@ class VacancyService(
 
         val skills = vacancyCreation.skillTags.map {
             skillRepository.save(Skill().apply {
-                this.skillTag = it
+                this.tag = it.lowercase()
             })
         }
 
         val vacancySkillTags = skills
             .map {
-                VacancySkillTag().apply {
+                val vacancySkillTag = VacancySkillTag().apply {
                     this.id = VacancySkillTagId().apply {
                         this.vacancyId = vacancy.id
-                        this.skillTag = it.skillTag
+                        this.skillTag = it.tag
                     }
-                    this.vacancy = vacancy
-                    this.skill = it
                 }
-            }.map {
-                vacancySkillTagRepository.save(it)
+                vacancySkillTag
             }
 
-        vacancy.vacancySkills = vacancy.vacancySkills?.plus(vacancySkillTags)
+        vacancySkillTagRepository.saveAll(vacancySkillTags)
 
         vacancy.id?.let {
             return VacancyMetadata(it)
@@ -62,5 +60,49 @@ class VacancyService(
     fun getVacancy(id: Long): Vacancy {
         return openVacancyRepository.findByIdOrNull(id)
             ?: throw VacancyException("Couldnt find vacancy with id: %s".format(id), 404)
+    }
+
+    @Transactional
+    fun filteredVacancies(vacancyFilter: VacancyFilter): SearchedVacancies {
+        val size = vacancyFilter.skillTags.size
+
+        val vacancies = vacancyFilter.skillTags
+            .map {
+                skillRepository.findByIdOrNull(it) ?: return SearchedVacancies(
+                    totalNumber = 0,
+                    pages = listOf(),
+                    firstPage = listOf()
+                )
+            }
+            .flatMap {
+                it.skillVacancies?.mapNotNull { it.vacancy?.id } ?: throw VacancyException("Smth went wrong", 500)
+            }
+            .groupBy {
+                it
+            }
+            .filter { it.value.size == size }
+            .map { it.key }
+
+        return SearchedVacancies(
+            totalNumber = vacancies.size.toLong(),
+            pages = vacancies.chunked(pageSize),
+            firstPage = vacancies.take(pageSize).map {
+                openVacancyRepository.findByIdOrNull(it) ?: throw VacancyException("Smth went wrong", 500)
+            }
+        )
+    }
+
+    @Transactional
+    fun topVacancies(): SearchedVacancies {
+        return SearchedVacancies(
+            totalNumber = openVacancyRepository.count(),
+            pages = openVacancyRepository.find1000NextVacancies(Pageable.ofSize(1000)).chunked(pageSize),
+            firstPage = openVacancyRepository.findAll(Pageable.ofSize(pageSize)).content
+        )
+    }
+
+    @Transactional
+    fun getVacanciesByIds(ids: List<Long>): List<Vacancy> {
+        return openVacancyRepository.findAllById(ids)
     }
 }

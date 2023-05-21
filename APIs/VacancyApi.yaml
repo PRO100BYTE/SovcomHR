@@ -85,9 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/VacancyView'
+                $ref: '#/components/schemas/SearchedVacanciesView'
         400:
           description: bad request
           content:
@@ -96,6 +94,28 @@ paths:
                 $ref: '#/components/schemas/Error'
   /api/vacancy:
     get:
+      summary: vacancies by ids
+      operationId: get vacancies by ids
+      tags:
+        - vacancy
+      parameters:
+        - in: query
+          name: ids
+          schema:
+            type: array
+            items:
+              type: number
+              format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VacancyView'
+    post:
       summary: filtered vacancies
       operationId: filtered vacancies
       tags:
@@ -113,9 +133,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SearchedVacanciesView'
+                $ref: '#/components/schemas/SearchedVacanciesView'
         400:
           description: bad request
           content:
