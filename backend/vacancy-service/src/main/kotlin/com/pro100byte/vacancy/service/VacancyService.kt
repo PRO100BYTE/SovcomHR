@@ -1,11 +1,13 @@
-package com.pro100byte.service
+package com.pro100byte.vacancy.service
 
-import com.pro100byte.exception.VacancyException
-import com.pro100byte.model.*
-import com.pro100byte.repository.ClosedVacancyRepository
-import com.pro100byte.repository.OpenVacancyRepository
-import com.pro100byte.repository.SkillRepository
-import com.pro100byte.repository.VacancySkillTagRepository
+import com.pro100byte.exception.ServiceException
+import com.pro100byte.location.repository.LocationRepository
+import com.pro100byte.skill.model.Skill
+import com.pro100byte.vacancy.repository.ClosedVacancyRepository
+import com.pro100byte.vacancy.repository.OpenVacancyRepository
+import com.pro100byte.skill.repository.SkillRepository
+import com.pro100byte.vacancy.model.*
+import com.pro100byte.vacancy.repository.VacancySkillTagRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -18,16 +20,24 @@ class VacancyService(
     private val closedVacancyRepository: ClosedVacancyRepository,
     private val skillRepository: SkillRepository,
     private val vacancySkillTagRepository: VacancySkillTagRepository,
+    private val locationRepository: LocationRepository,
 ) {
     private val pageSize = 10
     @Transactional(
         isolation = Isolation.READ_COMMITTED
     )
     fun createVacancy(vacancyCreation: VacancyCreation): VacancyMetadata {
+        val locations = locationRepository.findAllById(vacancyCreation.locations)
+
+        if (locations.isEmpty()) {
+            throw ServiceException("Locations with ids: ${vacancyCreation.locations} were found!", 400)
+        }
+
         val vacancy = OpenVacancy().apply {
             this.title = vacancyCreation.title
             this.body = vacancyCreation.body
             this.date = System.currentTimeMillis()
+            this.locations = locations
         }
 
         openVacancyRepository.save(vacancy)
@@ -53,13 +63,13 @@ class VacancyService(
 
         vacancy.id?.let {
             return VacancyMetadata(it)
-        } ?: throw VacancyException("Couldnt create vacancy", 500)
+        } ?: throw ServiceException("Couldnt create vacancy", 500)
     }
 
     @Transactional
     fun getVacancy(id: Long): Vacancy {
         return openVacancyRepository.findByIdOrNull(id)
-            ?: throw VacancyException("Couldnt find vacancy with id: %s".format(id), 404)
+            ?: throw ServiceException("Couldnt find vacancy with id: %s".format(id), 404)
     }
 
     @Transactional
@@ -75,7 +85,7 @@ class VacancyService(
                 )
             }
             .flatMap {
-                it.skillVacancies?.mapNotNull { it.vacancy?.id } ?: throw VacancyException("Smth went wrong", 500)
+                it.skillVacancies?.mapNotNull { it.vacancy?.id } ?: throw ServiceException("Smth went wrong", 500)
             }
             .groupBy {
                 it
@@ -87,7 +97,7 @@ class VacancyService(
             totalNumber = vacancies.size.toLong(),
             pages = vacancies.chunked(pageSize),
             firstPage = vacancies.take(pageSize).map {
-                openVacancyRepository.findByIdOrNull(it) ?: throw VacancyException("Smth went wrong", 500)
+                openVacancyRepository.findByIdOrNull(it) ?: throw ServiceException("Smth went wrong", 500)
             }
         )
     }

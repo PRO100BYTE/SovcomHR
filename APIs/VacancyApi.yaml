@@ -127,6 +127,13 @@ paths:
             type: array
             items:
               type: string
+        - in: query
+          name: locationTags
+          schema:
+            type: array
+            items:
+              type: number
+              format: int64
       responses:
         200:
           description: success
@@ -140,6 +147,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /api/location:
+    get:
+      summary: all locations
+      operationId: get all locations
+      tags:
+        - location
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationView'
+
 components:
   securitySchemes:
     bearerToken:
@@ -158,10 +182,16 @@ components:
           type: array
           items:
             type: string
+        locationIds:
+          type: array
+          items:
+            type: number
+            format: int64
       required:
         - title
         - body
-        - tags
+        - skillTags
+        - locationIds
     VacancyMetadataView:
       type: object
       properties:
@@ -184,6 +214,11 @@ components:
           type: array
           items:
             type: string
+        locationTags:
+          type: array
+          items:
+            type: number
+            format: int64
         date:
           type: number
           format: int64
@@ -212,6 +247,20 @@ components:
           description: array of vacancies for the first page
           items:
             $ref: '#/components/schemas/VacancyView'
+
+    LocationView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        city:
+          type: string
+        street:
+          type: string
+        number:
+          type: string
+
     Error:
       type: object
       properties:

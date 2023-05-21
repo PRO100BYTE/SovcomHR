@@ -1,4 +1,4 @@
-package com.pro100byte.model
+package com.pro100byte.vacancy.model
 
 import java.io.Serializable
 import java.util.*

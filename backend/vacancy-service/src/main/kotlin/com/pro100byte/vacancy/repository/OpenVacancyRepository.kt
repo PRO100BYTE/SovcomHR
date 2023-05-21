@@ -1,6 +1,6 @@
-package com.pro100byte.repository
+package com.pro100byte.vacancy.repository
 
-import com.pro100byte.model.OpenVacancy
+import com.pro100byte.vacancy.model.OpenVacancy
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query

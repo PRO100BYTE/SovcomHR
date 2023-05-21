@@ -1,7 +1,7 @@
-package com.pro100byte.repository
+package com.pro100byte.vacancy.repository
 
-import com.pro100byte.model.VacancySkillTag
-import com.pro100byte.model.VacancySkillTagId
+import com.pro100byte.vacancy.model.VacancySkillTag
+import com.pro100byte.vacancy.model.VacancySkillTagId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

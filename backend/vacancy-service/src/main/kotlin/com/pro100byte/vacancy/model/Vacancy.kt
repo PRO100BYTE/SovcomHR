@@ -1,5 +1,6 @@
-package com.pro100byte.model
+package com.pro100byte.vacancy.model
 
+import com.pro100byte.location.model.Location
 import javax.persistence.*
 
 @MappedSuperclass
@@ -14,6 +15,14 @@ abstract class Vacancy {
     var body: String? = null
     @Column(name = "date")
     var date: Long? = null
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "vacancy_location",
+        joinColumns = [JoinColumn(name = "vacancy_id")],
+        inverseJoinColumns = [JoinColumn(name = "location_id")]
+    )
+    var locations: List<Location>? = null
 
     @OneToMany(mappedBy = "vacancy", fetch = FetchType.LAZY)
     var vacancySkills: List<VacancySkillTag>? = null

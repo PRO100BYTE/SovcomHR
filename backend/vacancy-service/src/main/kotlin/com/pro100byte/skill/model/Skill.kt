@@ -1,5 +1,6 @@
-package com.pro100byte.model
+package com.pro100byte.skill.model
 
+import com.pro100byte.vacancy.model.VacancySkillTag
 import javax.persistence.*
 
 @Entity
