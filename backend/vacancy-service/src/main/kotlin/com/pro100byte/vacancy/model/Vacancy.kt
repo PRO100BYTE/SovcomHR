@@ -7,6 +7,7 @@ import javax.persistence.*
 abstract class Vacancy {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Access(AccessType.PROPERTY)
     var id: Long? = null
 
     @Column(name = "title")

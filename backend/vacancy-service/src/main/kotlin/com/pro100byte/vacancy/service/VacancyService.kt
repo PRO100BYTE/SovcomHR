@@ -74,30 +74,43 @@ class VacancyService(
 
     @Transactional
     fun filteredVacancies(vacancyFilter: VacancyFilter): SearchedVacancies {
-        val size = vacancyFilter.skillTags.size
+        val tagsCount = (vacancyFilter.skillTags?.size ?: 0) + (vacancyFilter.locationTags?.size ?: 0)
 
-        val vacancies = vacancyFilter.skillTags
-            .map {
-                skillRepository.findByIdOrNull(it) ?: return SearchedVacancies(
+        if (tagsCount == 0) {
+            return topVacancies()
+        }
+
+        val skillVacancyIds = vacancyFilter.skillTags
+            ?.map {
+                skillRepository.findByIdOrNull(it.lowercase()) ?: return SearchedVacancies(
                     totalNumber = 0,
                     pages = listOf(),
                     firstPage = listOf()
                 )
             }
-            .flatMap {
-                it.skillVacancies?.mapNotNull { it.vacancy?.id } ?: throw ServiceException("Smth went wrong", 500)
+            ?.flatMap {
+                it.skillVacancies?.mapNotNull { it.vacancy?.id }
+                    ?: throw ServiceException.smthWentWrong()
+            } ?: listOf()
+
+        val locationVacancyIds = vacancyFilter.locationTags
+            ?.map {
+                locationRepository.findByIdOrNull(it)
+                    ?: throw ServiceException("Validation error. No location with id: $it", 400)
             }
-            .groupBy {
-                it
-            }
-            .filter { it.value.size == size }
-            .map { it.key }
+            ?.flatMap {
+                it.vacancies?.mapNotNull { it.id }
+                    ?: throw ServiceException.smthWentWrong()
+            } ?: listOf()
+
+        val grouped = (skillVacancyIds + locationVacancyIds).groupBy { it }.filter { it.value.size == tagsCount }
+        val vacancies = grouped.map { it.key }
 
         return SearchedVacancies(
             totalNumber = vacancies.size.toLong(),
             pages = vacancies.chunked(pageSize),
             firstPage = vacancies.take(pageSize).map {
-                openVacancyRepository.findByIdOrNull(it) ?: throw ServiceException("Smth went wrong", 500)
+                openVacancyRepository.findByIdOrNull(it) ?: throw ServiceException.smthWentWrong()
             }
         )
     }

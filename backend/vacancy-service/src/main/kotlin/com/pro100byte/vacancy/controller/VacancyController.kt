@@ -18,13 +18,13 @@ class VacancyController(
     private val vacancyService: VacancyService,
 ): VacancyApi {
     override fun filteredVacancies(
-        skillTags: MutableList<String>,
-        locationTags: MutableList<BigDecimal>
+        skillTags: MutableList<String>?,
+        locationTags: MutableList<BigDecimal>?
     ): ResponseEntity<SearchedVacanciesView>? {
         val searchedVacancies = vacancyService.filteredVacancies(
             VacancyFilter(
-            skillTags = skillTags,
-            locationTags = locationTags.map { it.toLong() }
+                skillTags = skillTags,
+                locationTags = locationTags?.map { it.toLong() }
             )
         )
 

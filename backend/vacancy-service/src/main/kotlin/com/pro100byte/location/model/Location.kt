@@ -17,6 +17,6 @@ class Location {
     @Column(name = "number")
     var number: String? = null
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "locations")
     var vacancies: List<OpenVacancy>? = null
 }
