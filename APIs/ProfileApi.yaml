@@ -1,0 +1,220 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: The API of the auth service
+  version: '1.0'
+  title: Profile service API
+paths:
+  /api/profile/myProfile:
+    get:
+      summary: get my profile
+      operationId: get my profile
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_USER"
+            - "ROLE_ADMIN"
+      tags:
+        - profile
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileView'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/profile/initial:
+    post:
+      summary: create initial profile
+      operationId: create initial profile
+      tags:
+        - profile
+      security:
+        - bearerToken:
+            - "ROLE_TECH"
+      responses:
+        200:
+          description: success
+          content:
+            text/plain:
+              schema:
+                type: number
+                format: int64
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/profile:
+    post:
+      summary: edit profile
+      operationId: edit profile
+      tags:
+        - profile
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_USER"
+            - "ROLE_ADMIN"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileEditView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileView'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/profile/{id}:
+    get:
+      summary: get profile by id
+      operationId: get profile by id
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_ADMIN"
+      tags:
+        - profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileView'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    ProfileView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        patronymic:
+          type: string
+        birthDate:
+          type: number
+          format: int64
+        avatar:
+          type: string
+          description: url that leads to the picture
+        cv:
+          type: string
+          description: url that leads to the cv
+        video:
+          type: string
+          description: url that leads to the video
+        skillTags:
+          type: array
+          items:
+            type: string
+        location:
+          type: string
+        verified:
+          type: boolean
+        enabled:
+          type: boolean
+    ProfileEditView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        patronymic:
+          type: string
+        birthDate:
+          type: number
+          format: int64
+        avatar:
+          type: string
+          description: url that leads to the picture
+        skillTags:
+          type: array
+          items:
+            type: string
+        location:
+          type: string
+        passportSerial:
+          type: string
+        passportNumber:
+          type: string
+        inn:
+          type: string
+        cv:
+          type: string
+          description: url that leads to the cv
+        video:
+          type: string
+          description: url that leads to the video
+
+
+    Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string
