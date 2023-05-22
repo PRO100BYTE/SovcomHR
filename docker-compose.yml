@@ -3,6 +3,7 @@ services:
     build: ./backend/vacancy-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://vacancy-postgres:5432/postgres
+      SECRET_KEY: ${SECRET_KEY}
     ports:
       - "8001:8080"
       - "50006:50005"
@@ -20,6 +21,7 @@ services:
     build: ./backend/auth-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://auth-postgres:5432/postgres
+      SECRET_KEY: ${SECRET_KEY}
     ports:
       - "8000:8080"
       - "50005:50005"
