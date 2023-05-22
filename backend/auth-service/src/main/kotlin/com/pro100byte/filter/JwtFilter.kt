@@ -1,6 +1,5 @@
 package com.pro100byte.filter
 
-import com.pro100byte.exception.AuthException
 import com.pro100byte.util.JwtUtil
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

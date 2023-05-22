@@ -6,13 +6,9 @@ import javax.persistence.*
 @Table(name = "skill_tags")
 class SkillTag {
     @Id
+    @Column(name = "skill_tag_id")
     var skillTag: String? = null
 
-    @ManyToMany
-    @JoinTable(
-        name = "skill_tag_profile",
-        joinColumns = [JoinColumn(name = "vacancy_id")],
-        inverseJoinColumns = [JoinColumn(name = "skill_tag_id")]
-    )
-    var profiles: List<Profile>? = null
+    @ManyToMany(mappedBy = "skillTags")
+    var profiles: MutableList<Profile>? = null
 }

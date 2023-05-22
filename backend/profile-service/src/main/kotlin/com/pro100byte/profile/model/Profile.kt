@@ -1,6 +1,5 @@
 package com.pro100byte.profile.model
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import javax.persistence.*
 
 @Entity
@@ -9,6 +8,7 @@ class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Access(AccessType.PROPERTY)
+    @Column(name = "profile_id")
     var id: Long? = null
 
     @Column(name = "firstName", nullable = true)
@@ -50,6 +50,20 @@ class Profile {
     @Column(name = "inn")
     var inn: String? = null
 
-    @ManyToMany(mappedBy = "profiles")
-    var skillTags: List<SkillTag>? = null
+    @Column(name = "skill_tags")
+    var rawSkillTags: String? = null
+
+    @ManyToMany(
+        cascade = [
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+        ]
+    )
+    @JoinTable(
+        name = "profile_skill_tag",
+        joinColumns = [JoinColumn(name = "profile_id")],
+        inverseJoinColumns = [JoinColumn(name = "skill_tag_id")],
+        indexes = [Index(name = "skill_tag_index", columnList = "skill_tag_id")]
+    )
+    var skillTags: MutableList<SkillTag>? = null
 }

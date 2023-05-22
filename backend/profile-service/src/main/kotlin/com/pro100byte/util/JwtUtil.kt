@@ -1,5 +1,6 @@
 package com.pro100byte.util
 
+import com.pro100byte.exception.ServiceException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -46,6 +47,6 @@ class JwtUtil(
 
     fun decodeId(token: String): Long {
         val body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
-        return body.get(ID_CLAIM, Long::class.java)
+        return body.get(ID_CLAIM, Integer::class.java).toLong()
     }
 }

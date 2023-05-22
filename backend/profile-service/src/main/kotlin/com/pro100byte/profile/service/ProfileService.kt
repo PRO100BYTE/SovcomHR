@@ -1,12 +1,14 @@
 package com.pro100byte.profile.service
 
-import com.pro100byte.dto.ProfileEditView
 import com.pro100byte.exception.ServiceException
 import com.pro100byte.profile.model.Profile
+import com.pro100byte.profile.model.ProfileEdit
+import com.pro100byte.profile.model.SkillTag
 import com.pro100byte.profile.repository.ProfileRepository
 import com.pro100byte.profile.repository.SkillTagRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import javax.transaction.Transactional
 
 @Service
 class ProfileService(
@@ -20,42 +22,55 @@ class ProfileService(
             ?: throw ServiceException.smthWentWrong()
     }
 
-    fun editProfile(profileEditView: ProfileEditView): Profile {
-        val profile = profileRepository.findByIdOrNull(profileEditView.id.toLong())
-            ?: throw ServiceException("Couldnt find profile with id: ${profileEditView.id.toLong()}", 404)
+    @Transactional
+    fun editProfile(profileEdit: ProfileEdit): Profile {
+        val profile = profileRepository.findByIdOrNull(profileEdit.id)
+            ?: throw ServiceException("Couldnt find profile with id: ${profileEdit.id}", 404)
 
-        profileEditView.avatar?.let {
+        profileEdit.avatar?.let {
             profile.avatar = it
         }
-        profileEditView.firstName?.let {
+        profileEdit.firstName?.let {
             profile.firstName = it
         }
-        profileEditView.lastName?.let {
+        profileEdit.lastName?.let {
             profile.lastName = it
         }
-        profileEditView.patronymic?.let {
+        profileEdit.patronymic?.let {
             profile.patronymic = it
         }
-        profileEditView.birthDate?.let {
+        profileEdit.birthDate?.let {
             profile.birthDate = it.toLong()
         }
-        profileEditView.location?.let {
+        profileEdit.location?.let {
             profile.location = it
         }
-        profileEditView.passportSerial?.let {
+        profileEdit.passportSerial?.let {
             profile.passportSerial = it
         }
-        profileEditView.passportNumber?.let {
+        profileEdit.passportNumber?.let {
             profile.passportNumber = it
         }
-        profileEditView.inn?.let {
+        profileEdit.inn?.let {
             profile.inn = it
         }
-        profileEditView.cv?.let {
+        profileEdit.cv?.let {
             profile.cv = it
         }
-        profileEditView.video?.let {
+        profileEdit.video?.let {
             profile.video = it
+        }
+        profileEdit.skillTags?.let {
+            profile.rawSkillTags = it.joinToString(separator = ",")
+        }
+
+        profileEdit.skillTags?.distinct()?.map {
+            SkillTag().apply {
+                this.skillTag = it.lowercase()
+                this.profiles?.add(profile)
+            }
+        }?.let {
+            profile.skillTags?.addAll(it)
         }
 
         return profileRepository.save(profile)

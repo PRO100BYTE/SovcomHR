@@ -2,7 +2,7 @@ logging:
   level:
     org:
       hibernate:
-        SQL: INFO
+        SQL: DEBUG
 
 spring:
   datasource:
