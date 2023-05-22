@@ -6,3 +6,4 @@ backend/*/.gradle
 backend/*/build
 backend/*.iml
 backend/*/*.iml
+.env
