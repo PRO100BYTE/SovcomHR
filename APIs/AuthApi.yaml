@@ -117,6 +117,9 @@ components:
           type: number
         userType:
           type: string
+        id:
+          type: number
+          format: int64
 
     LoginDataView:
       type: object
@@ -140,6 +143,9 @@ components:
           type: number
         userType:
           type: string
+        id:
+          type: number
+          format: int64
 
     RegisterDataView:
       type: object

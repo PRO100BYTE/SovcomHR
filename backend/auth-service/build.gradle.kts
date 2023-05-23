@@ -35,7 +35,7 @@ tasks.named("compileKotlin") {
     dependsOn("generateAllSpecs")
 }
 
-val apiList = listOf("AuthApi")
+val apiList = listOf("AuthApi", "ProfileApi")
 
 val generateTasks = apiList.map {
     tasks.register(it + "_generate", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java) {

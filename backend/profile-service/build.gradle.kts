@@ -24,8 +24,6 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
@@ -40,7 +38,7 @@ tasks.named("compileKotlin") {
     dependsOn("generateAllSpecs")
 }
 
-val apiList = listOf("VacancyApi")
+val apiList = listOf("ProfileApi")
 
 val generateTasks = apiList.map {
     tasks.register(it + "_generate", org.openapitools.generator.gradle.plugin.tasks.GenerateTask::class.java) {

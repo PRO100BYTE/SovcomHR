@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse
 @Component
 class JwtFilter(
     private val jwtUtil: JwtUtil,
-): OncePerRequestFilter() {
+) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -30,6 +30,11 @@ class JwtFilter(
         val token = headerValue.split(" ")[1]
 
         if (!jwtUtil.validateJwt(token)) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
+        if (!jwtUtil.checkExpiration(token)) {
             filterChain.doFilter(request, response)
             return
         }

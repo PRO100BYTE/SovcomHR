@@ -13,8 +13,8 @@ import javax.crypto.spec.SecretKeySpec
 class JwtUtil(
     @Value("\${jwt.expireIn}") val expireIn: Long,
     @Value("\${secret.key}") val secretKeyBase64: String,
-
 ) {
+    private val ID_CLAIM = "id"
     private val EMAIL_CLAIM = "email"
     private val ROLES_CLAIM = "roles"
     private val key = SecretKeySpec(
@@ -22,8 +22,18 @@ class JwtUtil(
         SignatureAlgorithm.HS256.jcaName
     )
 
+    fun createTechJWT(): String {
+        val claims = mapOf(EMAIL_CLAIM to "AUTH", ROLES_CLAIM to "TECH", ID_CLAIM to "AUTH")
+
+        return Jwts.builder()
+            .setClaims(claims)
+            .setExpiration(Date(System.currentTimeMillis() + expireIn))
+            .signWith(key)
+            .compact()
+    }
+
     fun createJwt(user: User): String {
-        val claims = mapOf(EMAIL_CLAIM to user.email, ROLES_CLAIM to user.roles)
+        val claims = mapOf(EMAIL_CLAIM to user.email, ROLES_CLAIM to user.roles, ID_CLAIM to user.id)
 
         return Jwts.builder()
             .setClaims(claims)
@@ -54,5 +64,10 @@ class JwtUtil(
     fun checkExpiration(token: String): Boolean {
         val body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
         return body.expiration.after(Date(System.currentTimeMillis()))
+    }
+
+    fun decodeId(token: String): Long {
+        val body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
+        return body.get(ID_CLAIM, Long::class.java)
     }
 }

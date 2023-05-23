@@ -1,4 +1,22 @@
 services:
+  profile-service:
+    build: ./backend/profile-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://profile-postgres:5432/postgres
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "8002:8080"
+      - "50007:50005"
+    depends_on:
+      - profile-postgres
+  profile-postgres:
+    image: postgres
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
   vacancy-service:
     build: ./backend/vacancy-service
     environment:
@@ -27,6 +45,7 @@ services:
       - "50005:50005"
     depends_on:
       - auth-postgres
+      - profile-service
   auth-postgres:
     image: postgres
     ports:

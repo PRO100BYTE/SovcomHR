@@ -11,6 +11,9 @@ class User {
     @Id
     var email: String? = null
 
+    @Column(name = "id")
+    var id: Long? = null
+
     @Column(name = "password")
     var password: String? = null
 

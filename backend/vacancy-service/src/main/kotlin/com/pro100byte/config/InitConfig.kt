@@ -71,7 +71,6 @@ class InitConfig(
             listOf("Java", "Kotlin", "Docker"),
             listOf(locId2)
         )
-
         vacancyService.createVacancy(vacancyCreation1)
         vacancyService.createVacancy(vacancyCreation2)
         vacancyService.createVacancy(vacancyCreation3)

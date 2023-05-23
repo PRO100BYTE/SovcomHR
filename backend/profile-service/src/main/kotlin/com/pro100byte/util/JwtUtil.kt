@@ -46,6 +46,6 @@ class JwtUtil(
 
     fun decodeId(token: String): Long {
         val body = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
-        return body.get(ID_CLAIM, Long::class.java)
+        return body.get(ID_CLAIM, Integer::class.java).toLong()
     }
 }

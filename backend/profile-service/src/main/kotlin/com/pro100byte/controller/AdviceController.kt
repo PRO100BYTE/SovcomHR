@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 @RestControllerAdvice
 class AdviceController {
     @ExceptionHandler(ServiceException::class)
-    fun handleAuthException(exception: ServiceException): ResponseEntity<Error> {
+    fun handleServiceException(exception: ServiceException): ResponseEntity<Error> {
         return ResponseEntity(Error().apply {
             this.errorMessage = exception.message
             this.stacktrace = exception.stackTrace.map {
