@@ -3,6 +3,7 @@ package com.pro100byte.profile.controller
 import com.pro100byte.api.ProfileApi
 import com.pro100byte.dto.ProfileEditView
 import com.pro100byte.dto.ProfileView
+import com.pro100byte.dto.SearchedProfilesView
 import com.pro100byte.exception.ServiceException
 import com.pro100byte.profile.model.ProfileEdit
 import com.pro100byte.profile.service.ProfileService
@@ -35,11 +36,7 @@ class Controller(
             profileEditView.avatar,
             profileEditView.skillTags,
             profileEditView.location,
-            profileEditView.passportSerial,
-            profileEditView.passportNumber,
-            profileEditView.inn,
             profileEditView.cv,
-            profileEditView.video,
         )
 
         val profile = profileService.editProfile(profileEdit)
@@ -54,10 +51,7 @@ class Controller(
                 this.birthDate = profile.birthDate?.toBigDecimal()
                 this.avatar = profile.avatar
                 this.cv = profile.cv
-                this.video = profile.video
                 this.location = profile.location
-                this.verified = profile.verified
-                this.enabled = profile.enabled
                 this.skillTags = profile.rawSkillTags?.split(",")
             }
         )
@@ -82,10 +76,7 @@ class Controller(
                 this.birthDate = myProfile.birthDate?.toBigDecimal()
                 this.avatar = myProfile.avatar
                 this.cv = myProfile.cv
-                this.video = myProfile.video
                 this.location = myProfile.location
-                this.verified = myProfile.verified
-                this.enabled = myProfile.enabled
                 this.skillTags = myProfile.rawSkillTags?.split(",")
             }
         )
@@ -103,11 +94,38 @@ class Controller(
                 this.birthDate = profile.birthDate?.toBigDecimal()
                 this.avatar = profile.avatar
                 this.cv = profile.cv
-                this.video = profile.video
                 this.location = profile.location
-                this.verified = profile.verified
-                this.enabled = profile.enabled
                 this.skillTags = profile.rawSkillTags?.split(",")
+            }
+        )
+    }
+
+    override fun searchProfile(skillTags: MutableList<String>?, names: MutableList<String>?): ResponseEntity<SearchedProfilesView>? {
+        val searchedProfiles = profileService.searchProfiles(
+            skillTags, names
+        )
+
+        return ResponseEntity.ok(
+            SearchedProfilesView().apply {
+                this.totalnumber = searchedProfiles.totalnumber.toBigDecimal()
+                this.profiles = searchedProfiles.profiles.map {
+                    it.map {
+                        it.toBigDecimal()
+                    }
+                }
+                this.firstProfiles = searchedProfiles.firstProfiles.map {
+                    ProfileView().apply {
+                        this.id = it.id?.toBigDecimal()
+                        this.firstName = it.firstName
+                        this.lastName = it.lastName
+                        this.patronymic = it.patronymic
+                        this.cv = it.cv
+                        this.avatar = it.avatar
+                        this.birthDate = it.birthDate?.toBigDecimal()
+                        this.location = this.location
+                        this.skillTags = it.rawSkillTags?.split(",")
+                    }
+                }
             }
         )
     }

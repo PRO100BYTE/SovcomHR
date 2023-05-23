@@ -45,6 +45,7 @@ services:
       - "50005:50005"
     depends_on:
       - auth-postgres
+      - profile-service
   auth-postgres:
     image: postgres
     ports:

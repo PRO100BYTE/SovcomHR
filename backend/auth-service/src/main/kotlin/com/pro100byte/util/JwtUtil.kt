@@ -22,6 +22,16 @@ class JwtUtil(
         SignatureAlgorithm.HS256.jcaName
     )
 
+    fun createTechJWT(): String {
+        val claims = mapOf(EMAIL_CLAIM to "AUTH", ROLES_CLAIM to "TECH", ID_CLAIM to "AUTH")
+
+        return Jwts.builder()
+            .setClaims(claims)
+            .setExpiration(Date(System.currentTimeMillis() + expireIn))
+            .signWith(key)
+            .compact()
+    }
+
     fun createJwt(user: User): String {
         val claims = mapOf(EMAIL_CLAIM to user.email, ROLES_CLAIM to user.roles, ID_CLAIM to user.id)
 

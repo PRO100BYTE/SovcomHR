@@ -29,26 +29,8 @@ class Profile {
     @Column(name = "cv", nullable = true)
     var cv: String? = null
 
-    @Column(name = "video", nullable = true)
-    var video: String? = null
-
     @Column(name = "location", nullable = true)
     var location: String? = null
-
-    @Column(name = "verified")
-    var verified: Boolean = false
-
-    @Column(name = "enabled")
-    var enabled: Boolean = false
-
-    @Column(name = "passportSerial")
-    var passportSerial: String? = null
-
-    @Column(name = "passportNumber")
-    var passportNumber: String? = null
-
-    @Column(name = "inn")
-    var inn: String? = null
 
     @Column(name = "skill_tags")
     var rawSkillTags: String? = null
@@ -66,4 +48,7 @@ class Profile {
         indexes = [Index(name = "skill_tag_index", columnList = "skill_tag_id")]
     )
     var skillTags: MutableList<SkillTag>? = null
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "profile", cascade = [CascadeType.ALL])
+    var nameSearch: List<NameSearch> = listOf()
 }

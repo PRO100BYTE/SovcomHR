@@ -14,14 +14,14 @@ class InitConfig(
     fun startUp() {
         val skillList = listOf("Java", "Kotlin", "Javascript", "Kotlin", "Python", "C++", "C#")
 
-        (1..2)
+        (1..5)
             .map {
                 profileService.createInitialProfile()
             }
             .map { ProfileEdit(
                 id = it,
                 firstName = "firstName$it",
-                lastName = "firstName$it",
+                lastName = "lastName$it",
                 skillTags = (1..3).map {
                     skillList.random()
                 }

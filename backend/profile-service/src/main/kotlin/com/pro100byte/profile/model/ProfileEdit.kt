@@ -11,9 +11,5 @@ class ProfileEdit(
     val avatar: String? = null,
     val skillTags: List<String>? = null,
     val location: String? = null,
-    val passportSerial: String? = null,
-    val passportNumber: String? = null,
-    val inn: String? = null,
     val cv: String? = null,
-    val video: String? = null,
 )

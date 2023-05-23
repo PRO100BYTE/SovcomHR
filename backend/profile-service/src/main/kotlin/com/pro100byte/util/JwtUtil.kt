@@ -1,6 +1,5 @@
 package com.pro100byte.util
 
-import com.pro100byte.exception.ServiceException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm

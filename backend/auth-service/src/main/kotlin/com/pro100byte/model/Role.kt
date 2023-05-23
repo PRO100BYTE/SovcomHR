@@ -4,5 +4,6 @@ enum class Role(
 ) {
     ADMIN,
     HR,
-    USER;
+    USER,
+    TECH;
 }

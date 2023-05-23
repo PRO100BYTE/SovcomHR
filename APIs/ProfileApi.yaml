@@ -93,6 +93,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/profile/search:
+    get:
+      summary: search profile
+      operationId: search profile
+      tags:
+        - profile
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_ADMIN"
+      parameters:
+        - in: query
+          name: skillTags
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: names
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchedProfilesView'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/profile/{id}:
     get:
@@ -158,19 +200,12 @@ components:
         cv:
           type: string
           description: url that leads to the cv
-        video:
-          type: string
-          description: url that leads to the video
         skillTags:
           type: array
           items:
             type: string
         location:
           type: string
-        verified:
-          type: boolean
-        enabled:
-          type: boolean
     ProfileEditView:
       type: object
       properties:
@@ -195,20 +230,29 @@ components:
             type: string
         location:
           type: string
-        passportSerial:
-          type: string
-        passportNumber:
-          type: string
-        inn:
-          type: string
         cv:
           type: string
           description: url that leads to the cv
-        video:
-          type: string
-          description: url that leads to the video
-
-
+    SearchedProfilesView:
+      type: object
+      properties:
+        totalnumber:
+          type: number
+          format: int64
+        profiles:
+          type: array
+          description: array of profiles
+          items:
+            type: array
+            description: page's array containing vacancy ids
+            items:
+              type: number
+              format: int64
+        firstProfiles:
+          type: array
+          description: array of vacancies for the first page
+          items:
+            $ref: '#/components/schemas/ProfileView'
     Error:
       type: object
       properties:
