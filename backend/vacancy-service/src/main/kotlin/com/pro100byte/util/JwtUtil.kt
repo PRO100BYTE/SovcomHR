@@ -1,6 +1,5 @@
 package com.pro100byte.util
 
-import com.pro100byte.model.User
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -11,9 +10,7 @@ import javax.crypto.spec.SecretKeySpec
 
 @Component
 class JwtUtil(
-    @Value("\${jwt.expireIn}") val expireIn: Long,
     @Value("\${secret.key}") val secretKeyBase64: String,
-
 ) {
     private val EMAIL_CLAIM = "email"
     private val ROLES_CLAIM = "roles"
@@ -21,16 +18,6 @@ class JwtUtil(
         Base64.getDecoder().decode(secretKeyBase64),
         SignatureAlgorithm.HS256.jcaName
     )
-
-    fun createJwt(user: User): String {
-        val claims = mapOf(EMAIL_CLAIM to user.email, ROLES_CLAIM to user.roles)
-
-        return Jwts.builder()
-            .setClaims(claims)
-            .setExpiration(Date(System.currentTimeMillis() + expireIn))
-            .signWith(key)
-            .compact()
-    }
 
     fun validateJwt(token: String): Boolean {
         return try {
