@@ -163,7 +163,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationView'
-
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerToken:
@@ -247,7 +252,6 @@ components:
           description: array of vacancies for the first page
           items:
             $ref: '#/components/schemas/VacancyView'
-
     LocationView:
       type: object
       properties:
@@ -260,7 +264,6 @@ components:
           type: string
         number:
           type: string
-
     Error:
       type: object
       properties:
