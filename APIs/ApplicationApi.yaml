@@ -1,0 +1,212 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: The API of the application service
+  version: '1.0'
+  title: Application service API
+paths:
+  /api/application/myApplications:
+    get:
+      summary: get all my applications
+      operationId: get all my applications
+      tags:
+        - application
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_USER"
+            - "ROLE_ADMIN"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchedApplicationView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/application/search:
+    post:
+      summary: get all applications for a vacancy
+      operationId: get all applications
+      tags:
+        - application
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_ADMIN"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationSearchView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchedApplicationView'
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/application/{id}:
+    get:
+      summary: get application by id
+      operationId: get application by id
+      tags:
+        - application
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_USER"
+            - "ROLE_ADMIN"
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+            format: int64
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationView'
+  /api/application/apply:
+    post:
+      summary: apply
+      operationId: apply
+      tags:
+        - application
+      security:
+        - bearerToken:
+            - "ROLE_HR"
+            - "ROLE_ADMIN"
+            - "ROLE_USER"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyView'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationView'
+
+        400:
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+  schemas:
+    ApplicationView:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+        profileId:
+          type: number
+          format: int64
+        vacancyId:
+          type: number
+          format: int64
+        status:
+          type: string
+    SearchedApplicationView:
+      type: object
+      properties:
+        totalnumber:
+          type: number
+          format: int64
+        applications:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: int64
+        firstApplications:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationView'
+    ApplicationSearchView:
+      type: object
+      properties:
+        vacancyId:
+          type: number
+          format: int64
+    ApplyView:
+      type: object
+      properties:
+        vacancyId:
+          type: number
+          format: int64
+        coverLetter:
+          type: string
+    Error:
+      type: object
+      properties:
+        errorMessage:
+          type: string
+        stacktrace:
+          type: array
+          items:
+            type: string

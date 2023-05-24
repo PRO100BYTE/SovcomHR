@@ -9,7 +9,7 @@ import javax.persistence.*
 class NameSearch {
     @Id
     var name: String? = null
-
+//TODO fix id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
     var profile: Profile? = null
